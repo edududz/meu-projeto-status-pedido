@@ -1,0 +1,72 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Status do Pedido</title>
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      margin: 2em;
+      background-color: #f7f7f7;
+    }
+    .card {
+      background-color: white;
+      padding: 2em;
+      border-radius: 10px;
+      box-shadow: 0 0 10px rgba(0,0,0,0.1);
+      max-width: 500px;
+      margin: auto;
+    }
+    h1 {
+      text-align: center;
+      color: #333;
+    }
+    .info {
+      margin-top: 1em;
+    }
+    .erro {
+      color: red;
+      text-align: center;
+      margin-top: 2em;
+    }
+  </style>
+</head>
+<body>
+  <div class="card">
+    <h1>Status do Pedido</h1>
+    <div id="resultado" class="info">Carregando...</div>
+  </div>
+
+  <script>
+    async function buscarPedido(pedidoID) {
+      try {
+        // URL da API - troque pelo seu back-end real
+        const response = await fetch(`https://seuservidor.com/api/pedido/${pedidoID}`);
+        
+        if (!response.ok) throw new Error("Pedido não encontrado");
+        
+        const data = await response.json();
+        document.getElementById("resultado").innerHTML = `
+          <p><strong>Pedido ID:</strong> ${pedidoID}</p>
+          <p><strong>Produto:</strong> ${data.Produto}</p>
+          <p><strong>Status:</strong> ${data.Status}</p>
+          <p><strong>Entrega prevista:</strong> ${data.DataEntrega}</p>
+        `;
+      } catch (err) {
+        document.getElementById("resultado").innerHTML = `<p class="erro">Pedido não encontrado ou erro ao consultar.</p>`;
+      }
+    }
+
+    // Pega o ID do pedido da URL (ex: ?pedido=1234)
+    const urlParams = new URLSearchParams(window.location.search);
+    const pedidoID = urlParams.get("pedido");
+
+    if (pedidoID) {
+      buscarPedido(pedidoID);
+    } else {
+      document.getElementById("resultado").innerHTML = `<p class="erro">Nenhum número de pedido foi informado.</p>`;
+    }
+  </script>
+</body>
+</html>
